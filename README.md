@@ -14,11 +14,12 @@ A self-hosted Docker registry with a web UI.
 docker-registry/
 ├── auth/
 │   └── htpasswd
-├── certs/
-│   └── domain1/
+├── certs/ (add your certs here)
+│   └── domain1/ (add your domain and its certs here)
 │       ├── fullchain.pem
 │       └── privkey.pem
 ├── data/
+├── .env
 ├── docker-compose.yml
 └── README.md
 ```
@@ -27,21 +28,47 @@ docker-registry/
 
 1. Create required directories:
     ```bash
-       mkdir -p auth certs data
+    mkdir -p auth certs data
     ```
-2. Create authentication credentials:
+
+2. Create `.env` file:
+    ```env
+    # Domain Configuration
+    REGISTRY_DOMAIN=domain1.lan
+    REGISTRY_PORT=5555
+    REGISTRY_UI_PORT=8080
+
+    # Protocol Configuration
+    REGISTRY_UI_PROTOCOL=http
+    REGISTRY_PROTOCOL=https
+
+    # SSL Certificate Paths
+    SSL_CERT_DIR=./certs
+    SSL_DOMAIN_DIR=domain1.lan
+    SSL_CERT_FILE=fullchain.pem
+    SSL_KEY_FILE=privkey.pem
+
+    # Auth Configuration
+    REGISTRY_USER=admin
+    REGISTRY_PASSWORD=yourpassword
+    ```
+
+3. Create authentication credentials:
     ```bash
-      # Note: Replace 'admin' and 'yourpassword' with your desired credentials.
-      docker run --entrypoint htpasswd httpd:2 -Bbn admin yourpassword > auth/htpasswd
+    # Note: Replace 'admin' and 'yourpassword' with your desired credentials
+    # Make sure these match REGISTRY_USER and REGISTRY_PASSWORD in your .env file
+    docker run --entrypoint htpasswd httpd:2 -Bbn admin yourpassword > auth/htpasswd
     ```
-    These same credentials need to be updated in docker-compose.yml for the registry-ui service.
 
-3. Place your SSL certificates:
+4. Place your SSL certificates:
+   - Place your SSL certificates in the directory specified by your environment variables:
+    ```bash
+    # Example path based on default .env values:
+    # ./certs/domain1.lan/fullchain.pem
+    # ./certs/domain1.lan/privkey.pem
+    ```
 
-    Place your fullchain.pem and privkey.pem in the appropriate directory under certs/
-    Update the certificate paths in docker-compose.yml if your structure differs
-
-4. Start the registry:
+5. Start the registry:
     ```bash
     docker-compose up -d
     ```
@@ -53,28 +80,28 @@ Scroll down for a Practical Example using helloworld to test your new registry
 ### Login to Registry
 
 ```bash
-docker login domain1.lan:5555
+docker login ${REGISTRY_DOMAIN}:${REGISTRY_PORT}
 ```
 
 ### Push Images
 ```bash
 # Tag your image
-docker tag your-image:tag domain1.lan:5555/your-image:tag
+docker tag your-image:tag ${REGISTRY_DOMAIN}:${REGISTRY_PORT}/your-image:tag
 # Push to registry
-docker push domain1.lan:5555/your-image:tag
+docker push ${REGISTRY_DOMAIN}:${REGISTRY_PORT}/your-image:tag
 ```
 
 ### Pull Images
 ```bash
-docker pull domain1.lan:5555/your-image:tag
+docker pull ${REGISTRY_DOMAIN}:${REGISTRY_PORT}/your-image:tag
 ```
 ## Web Interface
-Access the registry UI at: http://domain1.lan:8080
+Access the registry UI at: `${REGISTRY_UI_PROTOCOL}://${REGISTRY_DOMAIN}:${REGISTRY_UI_PORT}`
 
 ## Default Credentials
 ```
-Username: admin (or as set in htpasswd)
-Password: yourpassword (or as set in htpasswd)
+Username: ${REGISTRY_USER} (as set in .env and htpasswd)
+Password: ${REGISTRY_PASSWORD} (as set in .env and htpasswd)
 ```
 
 ## Maintenance
@@ -93,7 +120,7 @@ docker-compose down
 
 The registry data is stored in the data directory. Back up this directory along with the auth and certs directories.
 
-## Practical Example Using Hello World
+## Practical Example Using Hello World with http, domain1.lan, port 5555 for registry, port 8080 for UI 
 
 Here's a complete example to test your registry:
 
