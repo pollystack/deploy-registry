@@ -47,6 +47,9 @@ docker-registry/
     ```
 
 ## Usage
+
+Scroll down for a Practical Example using helloworld to test your new registry
+
 ### Login to Registry
 
 ```bash
@@ -89,3 +92,36 @@ docker-compose down
 ## Backup
 
 The registry data is stored in the data directory. Back up this directory along with the auth and certs directories.
+
+## Practical Example Using Hello World
+
+Here's a complete example to test your registry:
+
+```bash
+# Pull hello-world from Docker Hub
+docker pull hello-world
+```
+
+```bash
+# Tag for your private registry
+docker tag hello-world domain1.lan:5555/hello-world
+# Check image is tagged
+docker images
+```
+
+```bash
+# Push to your registry
+docker push domain1.lan:5555/hello-world
+```
+
+```bash
+# Verify in UI
+Visit http://domain1.lan:8080 and you should see 'hello-world' listed
+```
+
+```bash
+# Test pulling
+docker rmi hello-world domain1.lan:5555/hello-world
+docker pull domain1.lan:5555/hello-world
+docker run domain1.lan:5555/hello-world
+```
