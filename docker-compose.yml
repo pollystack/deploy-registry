@@ -28,7 +28,7 @@ services:
     ports:
       - "${REGISTRY_UI_PORT}:80"
     environment:
-      - REGISTRY_TITLE=Private Docker Registry
+      - REGISTRY_TITLE=${REGISTRY_TITLE}
       - REGISTRY_URL=${REGISTRY_PROTOCOL}://${REGISTRY_DOMAIN}:${REGISTRY_PORT}
       - SINGLE_REGISTRY=true
       - REGISTRY_ALLOW_BASIC_AUTH=true
