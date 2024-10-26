@@ -2,6 +2,9 @@
 
 A self-hosted Docker registry with a web UI.
 
+<img width="825" alt="Screenshot 2024-10-26 at 11 39 18 AM" src="https://github.com/user-attachments/assets/ec25b911-c894-483a-84a5-2033a9bf47de">
+
+
 ## Prerequisites
 
 - Docker
