@@ -29,7 +29,7 @@ services:
   registry-ui:
     image: joxit/docker-registry-ui:latest
     ports:
-      - "${REGISTRY_UI_PORT}:443"
+      - "${REGISTRY_UI_PORT}:80"
     environment:
       - REGISTRY_TITLE=${REGISTRY_TITLE}
       - REGISTRY_URL=${REGISTRY_PROTOCOL}://${REGISTRY_DOMAIN}:${REGISTRY_PORT}
@@ -37,8 +37,6 @@ services:
       - REGISTRY_ALLOW_BASIC_AUTH=true
       - REGISTRY_USER=${REGISTRY_USER}
       - REGISTRY_PASS=${REGISTRY_PASSWORD}
-      - NGINX_SSL_CERT=/certs/${SSL_DOMAIN_DIR}/${SSL_CERT_FILE}
-      - NGINX_SSL_KEY=/certs/${SSL_DOMAIN_DIR}/${SSL_KEY_FILE}
     volumes:
       - ${SSL_CERT_DIR}:/certs:ro
     networks:
